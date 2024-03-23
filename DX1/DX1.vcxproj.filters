@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="TK">
+      <UniqueIdentifier>{d88318eb-3024-4145-b818-e3d2d3368d88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class">
+      <UniqueIdentifier>{d85f3daf-44c8-4228-b10a-7f7bc138976b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DX1.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Init_RenderTarget_ViewPort.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Init_VSPS.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Init_DX.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Init_Texture.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Init_Matrix.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Init_Model.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Render.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="tk\DDS.h">
+      <Filter>TK</Filter>
+    </ClInclude>
+    <ClInclude Include="tk\DDSTextureLoader.h">
+      <Filter>TK</Filter>
+    </ClInclude>
+    <ClInclude Include="tk\DirectXHelpers.h">
+      <Filter>TK</Filter>
+    </ClInclude>
+    <ClInclude Include="tk\LoaderHelpers.h">
+      <Filter>TK</Filter>
+    </ClInclude>
+    <ClInclude Include="tk\PlatformHelpers.h">
+      <Filter>TK</Filter>
+    </ClInclude>
+    <ClInclude Include="tk\SimpleMath.h">
+      <Filter>TK</Filter>
+    </ClInclude>
+    <ClInclude Include="tk\WICTextureLoader.h">
+      <Filter>TK</Filter>
+    </ClInclude>
+    <ClInclude Include="MESH.h">
+      <Filter>Class</Filter>
+    </ClInclude>
+    <ClInclude Include="SHADER.h">
+      <Filter>Class</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DX1.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="tk\DDSTextureLoader.cpp">
+      <Filter>TK</Filter>
+    </ClCompile>
+    <ClCompile Include="tk\SimpleMath.cpp">
+      <Filter>TK</Filter>
+    </ClCompile>
+    <ClCompile Include="tk\WICTextureLoader.cpp">
+      <Filter>TK</Filter>
+    </ClCompile>
+    <ClCompile Include="MESH.cpp">
+      <Filter>Class</Filter>
+    </ClCompile>
+    <ClCompile Include="SHADER.cpp">
+      <Filter>Class</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DX1.rc">
+      <Filter>리소스 파일</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="DX1.ico">
+      <Filter>리소스 파일</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader02.fx">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include="tk\SimpleMath.inl">
+      <Filter>TK</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Line.fx">
+      <Filter>헤더 파일</Filter>
+    </FxCompile>
+    <FxCompile Include="PNT.fx">
+      <Filter>헤더 파일</Filter>
+    </FxCompile>
+    <FxCompile Include="PNT2.fx">
+      <Filter>헤더 파일</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>
