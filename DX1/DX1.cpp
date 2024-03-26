@@ -4,6 +4,8 @@
 #include "pch.h"
 #include "framework.h"
 #include "DX1.h"
+#include "StepTimer.h"
+#include "CupMesh.h"
 
 #define SAFE_RELESE(x) if(x){(x)->Release(); (x)=nullptr;}
 
@@ -98,7 +100,7 @@ void Move_WorldTM()
 
 
 
-void Render()//그리기 포함
+void Render(float fElapsedTime)//그리기 포함
 {
     // pd3dContext->OMSetRenderTargets(1, &g_pRenderTargetView, g_pDepthStencilView);//랜드타겟 설정
     pd3dContext->ClearRenderTargetView(g_pRenderTargetView, DirectX::Colors::Gray);//랜드타겟 블루로 클리어
@@ -149,6 +151,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     // TODO: 여기에 코드를 입력합니다.
+    CupMesh  cupMesh;
+    cupMesh.LoadFromFile("cup.txt");
+    cupMesh.Report();
+
 
     // 전역 문자열을 초기화합니다.
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -199,7 +205,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
         else
         {
-            Render();
+            float t = g_StepTimer.Tick();
+            Render(t);
         }
     }
 

@@ -15,6 +15,10 @@
 #include <DirectXMath.h>//3차원 계산
 #include <DirectXColors.h>//컬러
 
+#include <vector>
+#include <string>
+#include <map>
+
 #include "tk\SimpleMath.h"
 
 #pragma comment (lib, "d3d11.lib")
