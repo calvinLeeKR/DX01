@@ -1,4 +1,5 @@
 #pragma once
+// #include "tk\ConstantBuffer.h"
 using namespace DirectX;
 
 class SHADER
@@ -73,6 +74,8 @@ protected:
 
     ID3D11ShaderResourceView* m_pTextureDiffuse = nullptr;
     ID3D11SamplerState* m_pSamplerLinear = nullptr;
+
+    //ConstantBuffer<CBWorldViewProj, D3D11_BIND_CONSTANT_BUFFER> mCBuffer;
 
 };
 

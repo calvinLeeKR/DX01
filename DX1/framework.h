@@ -14,6 +14,7 @@
 #include <d3dcompiler.h>//셰이더를 이용하기위한 헤더
 #include <DirectXMath.h>//3차원 계산
 #include <DirectXColors.h>//컬러
+#include <wrl.h>
 
 #include <vector>
 #include <string>
