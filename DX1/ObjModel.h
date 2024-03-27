@@ -8,10 +8,10 @@ struct PNTVertex
 	XMFLOAT2 Tex;
 };
 
-class CupMesh
+class ObjModel
 {
 public:
-	~CupMesh()
+	~ObjModel()
 	{
 		for (int i = 0; i < mSubs.size(); i++)
 		{
@@ -33,6 +33,8 @@ public:
 	std::vector< XMFLOAT3 > gV;
 	std::vector< XMFLOAT2 > gVT;
 	std::vector< XMFLOAT3 > gVN;
+	std::vector<PNTVertex>  gVertexs;
+
 
 	struct SUB
 	{
@@ -42,8 +44,8 @@ public:
 
 		std::vector< FACE > mFaces;
 
-		std::vector< PNTVertex > mVertexs;
-		std::vector< WORD > mIndex;
+		std::vector<PNTVertex>& mVertexs;
+		std::vector<WORD> mIndex;
 
 		std::string mName;
 
@@ -54,8 +56,9 @@ public:
 
 		SUB(std::vector< XMFLOAT3 >& v,
 			std::vector< XMFLOAT2 >& vt,
-			std::vector< XMFLOAT3 >& vn) :
-			mV(v), mVT(vt), mVN(vn) {}
+			std::vector< XMFLOAT3 >& vn,
+			std::vector<PNTVertex>& pnt) :
+			mV(v), mVT(vt), mVN(vn), mVertexs(pnt) {}
 
 
 		WORD AddFace(FACE f);
@@ -71,21 +74,21 @@ public:
 class CUP_MESH    //실제로 init하는 함수
 {
 public:
-	class SUB : public MESH {
+	class SUB_MESH : public MESH {
 	public:
-		HRESULT Init(CupMesh::SUB* sub);
+		HRESULT Init(ObjModel::SUB* sub);
 		virtual HRESULT CreateLayout(ID3DBlob* pVSBlob) override;
-		virtual HRESULT Render(ID3D11DeviceContext* pd3dContext) override;
+		virtual void Render(ID3D11DeviceContext* pd3dContext) override;
 	};
 
-	std::vector< SUB*> m_Subs;
+	std::vector< SUB_MESH*> m_SubMeshes;
 	ID3D11InputLayout* m_pVertexLayout = nullptr;
 	class SHADER* m_Shader = nullptr;
 
 	HRESULT Init();
-	HRESULT Render(ID3D11DeviceContext* pd3dContext) override;
+	void Render(ID3D11DeviceContext* pd3dContext);
 	void SetShader(SHADER* shader);
 
 protected:
-	HRESULT CreateLayout(ID3DBlob* pVSBlob) override;
+	HRESULT CreateLayout(ID3DBlob* pVSBlob);
 };

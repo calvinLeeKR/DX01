@@ -125,7 +125,7 @@ HRESULT BoxMESH::CreateLayout(ID3DBlob* pVSBlob)
     return S_OK;
 }
 
-HRESULT BoxMESH::Render(ID3D11DeviceContext* pd3dContext)
+void BoxMESH::Render(ID3D11DeviceContext* pd3dContext)
 {
 	if (m_pVertexLayout == nullptr && m_Shader)
 		CreateLayout(m_Shader->GetVSBlob());
@@ -142,7 +142,6 @@ HRESULT BoxMESH::Render(ID3D11DeviceContext* pd3dContext)
 
     pd3dContext->DrawIndexed(m_IndexCount, 0, 0);
 
-    return S_OK;
 }
 
 void MESH::Release()

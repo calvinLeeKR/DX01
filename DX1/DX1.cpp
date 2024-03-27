@@ -5,7 +5,7 @@
 #include "framework.h"
 #include "DX1.h"
 #include "StepTimer.h"
-#include "CupMesh.h"
+#include "ObjModel.h"
 
 #define SAFE_RELESE(x) if(x){(x)->Release(); (x)=nullptr;}
 
@@ -60,7 +60,7 @@ ID3D11DeviceContext* GetD3DContext() {
 
 BoxMESH* g_BoxMesh = nullptr;
 BoxShader* g_BoxShader = nullptr;
-
+CUP_MESH* g_CupMesh = nullptr;
 
 //800 600
 //700 500
@@ -109,7 +109,7 @@ void Render(float fElapsedTime)//그리기 포함
 	Move_WorldTM();
 
     g_BoxShader->PreRender(pd3dContext);
-	g_BoxMesh->Render(pd3dContext);
+	//g_BoxMesh->Render(pd3dContext);
 
     Render_GridShader();
     Render_GridModel();
@@ -130,6 +130,7 @@ void Render(float fElapsedTime)//그리기 포함
 
     //pd3dContext->DrawIndexed(36, 0, 0);
 
+    g_CupMesh->Render(pd3dContext);
 
 
     pSwapChain->Present(DXGI_SWAP_EFFECT_SEQUENTIAL, 0);//pSwapChain->Present(0, 0);
@@ -151,7 +152,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     // TODO: 여기에 코드를 입력합니다.
-    CupMesh  cupMesh;
+    ObjModel  cupMesh;
     cupMesh.LoadFromFile("cup.txt");
     cupMesh.Report();
 
@@ -193,6 +194,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_BoxMesh->Init();
     g_BoxMesh->SetShader(g_BoxShader);
 
+    g_CupMesh = new CUP_MESH;
+    g_CupMesh->Init();
+    g_CupMesh->SetShader(g_BoxShader);
+
     //if (FAILED(Init_GridMatrix())) goto E_FINAL_POS;
 
     // 기본 메시지 루프입니다:
@@ -214,6 +219,7 @@ E_FINAL_POS:
 
     delete g_BoxMesh;
     delete g_BoxShader;
+    delete g_CupMesh;
 
     SAFE_RELESE(g_pVSBlob_VS);
 

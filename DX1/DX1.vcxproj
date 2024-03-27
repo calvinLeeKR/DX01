@@ -148,7 +148,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CupMesh.h" />
+    <ClInclude Include="ObjModel.h" />
     <ClInclude Include="DX1.h" />
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="framework.h" />
@@ -173,7 +173,7 @@
     <ClInclude Include="tk\WICTextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CupMesh.cpp" />
+    <ClCompile Include="ObjModel.cpp" />
     <ClCompile Include="DX1.cpp" />
     <ClCompile Include="StepTimer.cpp" />
     <ClCompile Include="MESH.cpp" />

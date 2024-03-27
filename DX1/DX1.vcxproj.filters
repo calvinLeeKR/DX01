@@ -87,7 +87,7 @@
     <ClInclude Include="StepTimer.h">
       <Filter>Class</Filter>
     </ClInclude>
-    <ClInclude Include="CupMesh.h">
+    <ClInclude Include="ObjModel.h">
       <Filter>Class</Filter>
     </ClInclude>
   </ItemGroup>
@@ -116,7 +116,7 @@
     <ClCompile Include="StepTimer.cpp">
       <Filter>Class</Filter>
     </ClCompile>
-    <ClCompile Include="CupMesh.cpp">
+    <ClCompile Include="ObjModel.cpp">
       <Filter>Class</Filter>
     </ClCompile>
   </ItemGroup>

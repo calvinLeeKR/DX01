@@ -4,7 +4,7 @@ class MESH
 {
 public:
     ~MESH() { Release(); }
-    virtual HRESULT Render(ID3D11DeviceContext* pd3dContext) = 0;
+    virtual void Render(ID3D11DeviceContext* pd3dContext) = 0;
     virtual void Release();
     void SetShader(class SHADER* shader);
 
@@ -27,7 +27,7 @@ class BoxMESH : public MESH
 {
 public:
     HRESULT Init();
-    HRESULT Render(ID3D11DeviceContext* pd3dContext) override;
+    void Render(ID3D11DeviceContext* pd3dContext) override;
 
 protected:
 	HRESULT CreateLayout(ID3DBlob* pVSBlob) override;
