@@ -36,27 +36,21 @@ bool ObjModel::LoadFromFile(const CHAR* fileName)
 			if (!mesh) {break;}
 			XMFLOAT3 v;
 			sscanf_s(line, "%s %f %f %f", type, (UINT)_countof(type), &v.x, &v.y, &v.z);
-			mesh->mV.push_back(v);
-
-			mesh->v_count++;
+			gV.push_back(v);
 		}
 		else if (strcmp("vt", type) == 0)
 		{
 			if (!mesh) { break; }
 			XMFLOAT2 v;
 			sscanf_s(line, "%s %f %f ", type, (UINT)_countof(type), &v.x, &v.y);
-			mesh->mVT.push_back(v);
-			
-			mesh->vt_count++;
+			gVT.push_back(v);
 		}
 		else if (strcmp("vn", type) == 0)
 		{
 			if (!mesh) { break; }
 			XMFLOAT3 v;
 			sscanf_s(line, "%s %f %f %f", type, (UINT)_countof(type), &v.x, &v.y, &v.z);
-			mesh->mVN.push_back(v);
-			
-			mesh->vn_count++;
+			gVN.push_back(v);			
 		}
 		else if (strcmp("f", type) == 0)
 		{
@@ -64,9 +58,9 @@ bool ObjModel::LoadFromFile(const CHAR* fileName)
 			
 			FACE f1, f2, f3;
 			sscanf_s(line, " %s %d/%d/%d %d/%d/%d %d/%d/%d", type, (unsigned)_countof(type), &f1.v, &f1.vt, &f1.vn, &f2.v, &f2.vt, &f2.vn, &f3.v, &f3.vt, &f3.vn);
-			WORD v1 = mesh->AddFace(f1);
-			WORD v2 = mesh->AddFace(f2);
-			WORD v3 = mesh->AddFace(f3);
+			WORD v1 = AddFace(f1);
+			WORD v2 = AddFace(f2);
+			WORD v3 = AddFace(f3);
 
 			mesh->mIndex.push_back(v1);
 			mesh->mIndex.push_back(v2);
@@ -78,7 +72,7 @@ bool ObjModel::LoadFromFile(const CHAR* fileName)
 			char name[64] = {};
 			sscanf_s(line, "%s %63s", type, (UINT)_countof(type), name, (UINT)_countof(name));
 
-			mesh = new SUB(gV,gVT,gVN, gVertexs);
+			mesh = new SUB;
 			mesh->mName = name;
 			
 			mSubs.push_back(mesh);
@@ -105,25 +99,25 @@ void ObjModel::Report()
 	OutputDebugStringA("\n");
 }
 
-WORD ObjModel::SUB::AddFace(FACE f)
+WORD ObjModel::AddFace(FACE f)
 {
 	
-	for (int i = 0; i < mFaces.size(); i++)
-	{
-		if (mFaces[i] == f)
-		{
-			return f.idx;
-		}
-	}
+// 	for (int i = 0; i < mFaces.size(); i++)
+// 	{
+// 		if (mFaces[i] == f)
+// 		{
+// 			return f.idx;
+// 		}
+// 	}
 	
-	f.idx = mVertexs.size();
+	f.idx = gVertexs.size();
 
 	PNTVertex v;
-	v.Pos = mV[f.v - 1];
-	v.Norm = mVN[f.vn - 1];
-	v.Tex = mVT[f.vt - 1];
+	v.Pos = gV[f.v - 1];
+	v.Norm = gVN[f.vn - 1];
+	v.Tex = gVT[f.vt - 1];
 	
-	mVertexs.push_back(v);
+	gVertexs.push_back(v);
 
 	mFaces.push_back(f);
 	return f.idx;
@@ -132,41 +126,14 @@ WORD ObjModel::SUB::AddFace(FACE f)
 void ObjModel::SUB::Report()
 {
 	char str[250];
-	sprintf_s(str, _countof(str), "v=%d, vt=%d, vn=%d, f=%d\n", v_count, vt_count, vn_count, f_count);
-	OutputDebugStringA(str);
+	//sprintf_s(str, _countof(str), "v=%d, vt=%d, vn=%d, f=%d\n", v_count, vt_count, vn_count, f_count);
+	//OutputDebugStringA(str);
 }
 
-HRESULT CUP_MESH::SUB_MESH::Init(ObjModel::SUB* sub)
+HRESULT CUP_MESH::SUB_MESH::InitIndexBuffer(ObjModel::SUB* sub)
 {
 	ID3D11Device* pd3dDevice = GetD3DDevice();
-	HRESULT hr;
-
-	m_VertexCount = sub->mVertexs.size();
-	PNTVertex* PNTs = new PNTVertex[m_VertexCount];
-
-	for (int i = 0; i < m_VertexCount; ++i) {
-		PNTs[i] = sub->mVertexs[i];
-	}
-
-	D3D11_BUFFER_DESC bd = {};
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(PNTVertex) * m_VertexCount;
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-
-	D3D11_SUBRESOURCE_DATA InitData = {};
-	InitData.pSysMem = PNTs;
-	hr = pd3dDevice->CreateBuffer(&bd, &InitData, &m_pVertexBuffer);
-	delete[] PNTs;
-
-	if (FAILED(hr)) {
-		MessageBoxA(0, "CUP_MESH::SUB::Init VertexBuffer 积己 角菩!!", "Error", MB_OK);
-		return hr;
-	}
-
-	// Create index buffer
-	// Create vertex buffer
-	
+	HRESULT hr;	
 
 	m_IndexCount = sub->mIndex.size();
 	WORD* idxs = new WORD[m_IndexCount];
@@ -174,10 +141,13 @@ HRESULT CUP_MESH::SUB_MESH::Init(ObjModel::SUB* sub)
 		idxs[i] = sub->mIndex[i];
 	}
 
+	D3D11_BUFFER_DESC bd = {};
 	bd.Usage = D3D11_USAGE_DEFAULT;
 	bd.ByteWidth = sizeof(WORD) * m_IndexCount;
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bd.CPUAccessFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA InitData = {};
 	InitData.pSysMem = idxs;
 	hr = pd3dDevice->CreateBuffer(&bd, &InitData, &m_pIndexBuffer);
 	delete[] idxs;
@@ -247,13 +217,46 @@ HRESULT CUP_MESH::Init()
 {
 	ObjModel objModel;
 	objModel.LoadFromFile("cup.txt");
+	InitVertexBuffer(objModel);
 
 	for (int i = 0; i < objModel.mSubs.size(); ++i) {
 		SUB_MESH* subM = new SUB_MESH;
-		subM->Init(objModel.mSubs[i]);
+		subM->InitIndexBuffer(objModel.mSubs[i]);
+		subM->m_pVertexBuffer = m_pVertexBuffer;
+		subM->m_pVertexBuffer->AddRef();
+
 		m_SubMeshes.push_back(subM);
 	}
 	return S_OK;
+}
+
+HRESULT CUP_MESH::InitVertexBuffer(ObjModel& obj)
+{
+	ID3D11Device* pd3dDevice = GetD3DDevice();
+	HRESULT hr;
+
+	m_VertexCount = obj.gVertexs.size();
+	PNTVertex* PNTs = new PNTVertex[m_VertexCount];
+
+	for (int i = 0; i < m_VertexCount; ++i) {
+		PNTs[i] = obj.gVertexs[i];
+	}
+
+	D3D11_BUFFER_DESC bd = {};
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.ByteWidth = sizeof(PNTVertex) * m_VertexCount;
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bd.CPUAccessFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA InitData = {};
+	InitData.pSysMem = PNTs;
+	hr = pd3dDevice->CreateBuffer(&bd, &InitData, &m_pVertexBuffer);
+	delete[] PNTs;
+
+	if (FAILED(hr)) {
+		MessageBoxA(0, "CUP_MESH::InitVertexBuffer VertexBuffer 积己 角菩!!", "Error", MB_OK);
+		return hr;
+	}
 }
 
 HRESULT CUP_MESH::SUB_MESH::CreateLayout(ID3DBlob* pVSBlob)
