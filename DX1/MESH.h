@@ -9,7 +9,7 @@ public:
     void SetShader(class SHADER* shader);
 
 
-protected:
+//protected:
 	virtual HRESULT CreateLayout(ID3DBlob* pVSBlob) = 0;
 
     ID3D11Buffer* m_pVertexBuffer = nullptr;//버텍스 버퍼
