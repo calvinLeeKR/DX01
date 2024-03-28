@@ -56,15 +56,18 @@ protected:
     struct CBLightDir
     {
         XMFLOAT4 vLightDir;
+        XMFLOAT4 EyePosition;
     };
 
     struct CBWorldViewProj
     {
         XMFLOAT4X4 WorldViewProj;
         XMFLOAT4X4 World;
+        XMFLOAT4 worldInverseTranspose[3];
     };
 
     XMFLOAT4 m_LightDir = { -0.577f, 0.577f, -0.577f, 0.5f };
+    XMFLOAT4 m_EyePos = { 5.0f, 5.0f, -5.0f, 0.0f };
     XMMATRIX m_World;
     XMMATRIX m_View;
     XMMATRIX m_Proj;

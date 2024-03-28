@@ -255,8 +255,10 @@ HRESULT CUP_MESH::InitVertexBuffer(ObjModel& obj)
 
 	if (FAILED(hr)) {
 		MessageBoxA(0, "CUP_MESH::InitVertexBuffer VertexBuffer 생성 실패!!", "Error", MB_OK);
-		return hr;
 	}
+
+	return hr;
+
 }
 
 HRESULT CUP_MESH::SUB_MESH::CreateLayout(ID3DBlob* pVSBlob)

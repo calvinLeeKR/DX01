@@ -131,14 +131,17 @@ void SHADER::Release()
 }
 
 void BoxShader::SetLightDir(XMFLOAT3 dir) 
-{ 
+{
 	m_LightDir.x = dir.x;
 	m_LightDir.y = dir.y;
 	m_LightDir.z = dir.z;
 
+	CBLightDir cb;
+	cb.vLightDir = m_LightDir;
+	cb.EyePosition = m_EyePos;
 
 	if (m_XCB_LightDir==nullptr) {
-		Create_ConstantBuffer(&m_XCB_LightDir, &m_LightDir, sizeof(CBLightDir));
+		Create_ConstantBuffer(&m_XCB_LightDir, &cb, sizeof(CBLightDir));
 	}
 }
 
@@ -185,6 +188,7 @@ void BoxShader::PreRender(ID3D11DeviceContext* pd3dContext)
 	if (m_XCB_WVP) pd3dContext->VSSetConstantBuffers(1, 1, &m_XCB_WVP);
 
 	pd3dContext->PSSetShader(m_pPixelShader, nullptr, 0);   //버텍스 쉐이더
+	pd3dContext->VSSetConstantBuffers(0, 1, &m_XCB_LightDir);
 	pd3dContext->PSSetConstantBuffers(1, 1, &m_XCB_WVP);
 	if (m_pTextureDiffuse) pd3dContext->PSSetShaderResources(0, 1, &m_pTextureDiffuse);
 	if (m_pSamplerLinear) pd3dContext->PSSetSamplers(0, 1, &m_pSamplerLinear);
@@ -210,14 +214,17 @@ void BoxShader::Update_ConstantBuffers(ID3D11DeviceContext* pd3dContext)
 		hr = pd3dContext->Map(m_XCB_LightDir, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
 		{
 			auto pCB = reinterpret_cast<CBLightDir*>(MappedResource.pData);
+			XMStoreFloat4(&pCB->EyePosition, XMLoadFloat4(&m_EyePos));
 			XMStoreFloat4(&pCB->vLightDir, XMLoadFloat4(&m_LightDir));
 			pCB->vLightDir.w = m_LightDir.w;
+
 		}
 		pd3dContext->Unmap(m_XCB_LightDir, 0);
 	}
 
 	if (m_XCB_WVP) {
 		XMMATRIX WVP = m_World * m_View * m_Proj;
+		XMMATRIX worldInverse = XMMatrixInverse(nullptr, m_World);
 
 		D3D11_MAPPED_SUBRESOURCE MappedResource;
 		hr = pd3dContext->Map(m_XCB_WVP, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
@@ -225,6 +232,10 @@ void BoxShader::Update_ConstantBuffers(ID3D11DeviceContext* pd3dContext)
 			auto pCB = reinterpret_cast<CBWorldViewProj*>(MappedResource.pData);
 			XMStoreFloat4x4(&pCB->WorldViewProj, XMMatrixTranspose(WVP));
 			XMStoreFloat4x4(&pCB->World, XMMatrixTranspose(m_World));
+
+			XMStoreFloat4(&pCB->worldInverseTranspose[0], worldInverse.r[0]);
+			XMStoreFloat4(&pCB->worldInverseTranspose[1], worldInverse.r[1]);
+			XMStoreFloat4(&pCB->worldInverseTranspose[2], worldInverse.r[2]);
 		}
 		pd3dContext->Unmap(m_XCB_WVP, 0);
 	}

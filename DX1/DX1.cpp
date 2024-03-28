@@ -91,7 +91,9 @@ void Move_WorldTM()
             timeStart = timeCur;
         t = (timeCur - timeStart) / 1000.0f;
     }
-    g_World = XMMatrixRotationY(t/2.f);
+    g_World = XMMatrixScaling(2.f, 2.f, 2.f);
+    g_World *= XMMatrixRotationY(t/2.f);
+
 
     g_BoxShader->SetWorld(g_World);
     g_BoxShader->SetViewProjection(g_View, g_Projection);
@@ -126,9 +128,6 @@ void Render(float fElapsedTime)//그리기 포함
 //         pd3dContext->OMSetBlendState(g_pBlendState, blendFactor, mask);
 //     }
 
-
-
-    //pd3dContext->DrawIndexed(36, 0, 0);
 
     g_CupMesh->Render(pd3dContext);
 
