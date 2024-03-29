@@ -62,9 +62,11 @@ bool ObjModel::LoadFromFile(const CHAR* fileName)
 			WORD v2 = AddFace(f2);
 			WORD v3 = AddFace(f3);
 
-			mesh->mIndex.push_back(v1);
-			mesh->mIndex.push_back(v2);
-			mesh->mIndex.push_back(v3);
+			if (mesh->m_StartIndexLocation == WORD_MAX) mesh->m_StartIndexLocation = mIndex.size();
+			mIndex.push_back(v1);
+			mIndex.push_back(v2);
+			mIndex.push_back(v3);
+			mesh->m_IndexCount += 3;
 							
 		}
 		else if (strcmp("g", type) == 0)
@@ -86,18 +88,6 @@ bool ObjModel::LoadFromFile(const CHAR* fileName)
 	return true;
 }
 
-void ObjModel::Report()
-{
-	for (int i = 0; i < mSubs.size(); i++)
-	{
-		
-		OutputDebugStringA(mSubs[i]->mName.c_str());
-		OutputDebugStringA("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-		mSubs[i]->Report();
-		
-	}
-	OutputDebugStringA("\n");
-}
 
 WORD ObjModel::AddFace(FACE f)
 {
@@ -123,41 +113,13 @@ WORD ObjModel::AddFace(FACE f)
 	return f.idx;
 }
 
-void ObjModel::SUB::Report()
+
+HRESULT CUP_MESH::SUB_MESH::Init(ObjModel::SUB* sub)
 {
-	char str[250];
-	//sprintf_s(str, _countof(str), "v=%d, vt=%d, vn=%d, f=%d\n", v_count, vt_count, vn_count, f_count);
-	//OutputDebugStringA(str);
-}
-
-HRESULT CUP_MESH::SUB_MESH::InitIndexBuffer(ObjModel::SUB* sub)
-{
-	ID3D11Device* pd3dDevice = GetD3DDevice();
-	HRESULT hr;	
-
-	m_IndexCount = sub->mIndex.size();
-	WORD* idxs = new WORD[m_IndexCount];
-	for (int i = 0; i < m_IndexCount; ++i) {
-		idxs[i] = sub->mIndex[i];
-	}
-
-	D3D11_BUFFER_DESC bd = {};
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(WORD) * m_IndexCount;
-	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-
-	D3D11_SUBRESOURCE_DATA InitData = {};
-	InitData.pSysMem = idxs;
-	hr = pd3dDevice->CreateBuffer(&bd, &InitData, &m_pIndexBuffer);
-	delete[] idxs;
-
-	if (FAILED(hr)) {
-		MessageBoxA(0, "CUP_MESH::SUB::Init IndexBuffer »ý¼º ½ÇÆÐ!!", "Error", MB_OK);
-		return hr;
-	}
-
-
+	m_IndexCount = sub->m_IndexCount;
+	m_StartIndexLocation = sub->m_StartIndexLocation;
+	m_BaseVertexLocation = sub->m_BaseVertexLocation;
+	mName = sub->mName;
 
 	return S_OK;
 }
@@ -169,6 +131,13 @@ void CUP_MESH::Render(ID3D11DeviceContext* pd3dContext)
 
 	if (m_Shader)
 	    m_Shader->PreRender(pd3dContext);
+
+	UINT stride = sizeof(PNTVertex);
+	UINT offset = 0;
+	pd3dContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
+	pd3dContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+	pd3dContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pd3dContext->IASetInputLayout(m_pVertexLayout);         //·¹ÀÌ¾Æ¿ô ÀÎÇ²
 
 	for (SUB_MESH* sub : m_SubMeshes) {
 		sub->Render(pd3dContext);
@@ -205,11 +174,6 @@ HRESULT CUP_MESH::CreateLayout(ID3DBlob* pVSBlob)
 		return hr;
 	}
 
-	for (SUB_MESH* sub : m_SubMeshes) {
-		sub->m_pVertexLayout = m_pVertexLayout;
-		sub->m_pVertexLayout->AddRef();
-	}
-
 	return S_OK;
 }
 
@@ -218,12 +182,11 @@ HRESULT CUP_MESH::Init()
 	ObjModel objModel;
 	objModel.LoadFromFile("cup.txt");
 	InitVertexBuffer(objModel);
+	InitIndexBuffer(objModel);
 
 	for (int i = 0; i < objModel.mSubs.size(); ++i) {
 		SUB_MESH* subM = new SUB_MESH;
-		subM->InitIndexBuffer(objModel.mSubs[i]);
-		subM->m_pVertexBuffer = m_pVertexBuffer;
-		subM->m_pVertexBuffer->AddRef();
+		subM->Init(objModel.mSubs[i]);
 
 		m_SubMeshes.push_back(subM);
 	}
@@ -261,19 +224,37 @@ HRESULT CUP_MESH::InitVertexBuffer(ObjModel& obj)
 
 }
 
-HRESULT CUP_MESH::SUB_MESH::CreateLayout(ID3DBlob* pVSBlob)
+HRESULT CUP_MESH::InitIndexBuffer(ObjModel& obj)
 {
-	return E_NOTIMPL;
+	ID3D11Device* pd3dDevice = GetD3DDevice();
+	HRESULT hr;
+
+	m_IndexCount = obj.mIndex.size();
+	WORD* idxs = new WORD[m_IndexCount];
+	for (int i = 0; i < m_IndexCount; ++i) {
+		idxs[i] = obj.mIndex[i];
+	}
+
+	D3D11_BUFFER_DESC bd = {};
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.ByteWidth = sizeof(WORD) * m_IndexCount;
+	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	bd.CPUAccessFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA InitData = {};
+	InitData.pSysMem = idxs;
+	hr = pd3dDevice->CreateBuffer(&bd, &InitData, &m_pIndexBuffer);
+	delete[] idxs;
+
+	if (FAILED(hr)) {
+		MessageBoxA(0, "CUP_MESH:: IndexBuffer »ý¼º ½ÇÆÐ!!", "Error", MB_OK);
+	}
+
+	return hr;
 }
+
 
 void CUP_MESH::SUB_MESH::Render(ID3D11DeviceContext* pd3dContext)
 {
-	UINT stride = sizeof(PNTVertex);
-	UINT offset = 0;
-	pd3dContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
-	pd3dContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-	pd3dContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	pd3dContext->IASetInputLayout(m_pVertexLayout);         //·¹ÀÌ¾Æ¿ô ÀÎÇ²
-
-	pd3dContext->DrawIndexed(m_IndexCount, 0, 0);
+	pd3dContext->DrawIndexed(m_IndexCount, m_StartIndexLocation, 0);
 }

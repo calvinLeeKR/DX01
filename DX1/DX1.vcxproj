@@ -148,6 +148,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="IMesh.h" />
     <ClInclude Include="ObjModel.h" />
     <ClInclude Include="DX1.h" />
     <ClInclude Include="StepTimer.h" />

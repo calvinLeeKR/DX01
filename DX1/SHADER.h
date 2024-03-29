@@ -35,7 +35,7 @@ protected:
 class BoxShader : public SHADER
 {
 public:
-    const WCHAR* m_fileName = L"PNT.fx";
+    const WCHAR* m_fileName = L"PNT2.fx";
 
     HRESULT Init() {
         return InitFromFile(m_fileName);

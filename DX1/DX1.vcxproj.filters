@@ -90,6 +90,9 @@
     <ClInclude Include="ObjModel.h">
       <Filter>Class</Filter>
     </ClInclude>
+    <ClInclude Include="IMesh.h">
+      <Filter>Class</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX1.cpp">
