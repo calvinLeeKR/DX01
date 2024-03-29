@@ -102,13 +102,13 @@ void ObjModel::Report()
 WORD ObjModel::AddFace(FACE f)
 {
 	
-// 	for (int i = 0; i < mFaces.size(); i++)
-// 	{
-// 		if (mFaces[i] == f)
-// 		{
-// 			return f.idx;
-// 		}
-// 	}
+ 	for (int i = 0; i < mFaces.size(); i++)
+ 	{
+ 		if (mFaces[i] == f)
+ 		{
+ 			return mFaces[i].idx;
+ 		}
+ 	}
 	
 	f.idx = gVertexs.size();
 

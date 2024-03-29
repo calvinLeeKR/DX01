@@ -41,11 +41,8 @@ public:
 	struct SUB
 	{
 		std::vector<WORD> mIndex;
-
 		std::string mName;
-
 		void Report();
-
 	};
 
 	std::vector< SUB*> mSubs;
