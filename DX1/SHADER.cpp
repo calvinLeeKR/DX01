@@ -197,7 +197,7 @@ void BoxShader::PreRender(ID3D11DeviceContext* pd3dContext)
 	if (m_XCB_WVP) pd3dContext->VSSetConstantBuffers(1, 1, &m_XCB_WVP);
 
 	pd3dContext->PSSetShader(m_pPixelShader, nullptr, 0);   //버텍스 쉐이더
-	pd3dContext->VSSetConstantBuffers(0, 1, &m_XCB_LightDir);
+	pd3dContext->PSSetConstantBuffers(0, 1, &m_XCB_LightDir);
 	pd3dContext->PSSetConstantBuffers(1, 1, &m_XCB_WVP);
 	if (m_pTextureDiffuse) pd3dContext->PSSetShaderResources(0, 1, &m_pTextureDiffuse);
 	if (m_pSamplerLinear) pd3dContext->PSSetSamplers(0, 1, &m_pSamplerLinear);
