@@ -181,7 +181,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_BoxShader->Init();
     g_BoxShader->SetLightDir(vLightDir);
     g_BoxShader->SetAmbientLight(0.2f);
-    g_BoxShader->SetDiffuseTexture(L"seafloor.dds");
+    g_BoxShader->SetDiffuseTexture(L"cup.jpg");
     g_BoxShader->SetWorld(g_World);
     g_BoxShader->SetViewProjection(g_View, g_Projection);
 

@@ -156,10 +156,19 @@ void BoxShader::SetViewProjection(XMMATRIX& view, XMMATRIX& proj)
 
 void BoxShader::SetDiffuseTexture(const WCHAR* texName)
 {
+	HRESULT hr;
 	ID3D11Device* pd3dDevice = GetD3DDevice();
 
 	if (m_pTextureDiffuse == nullptr) {	
-		HRESULT hr = CreateDDSTextureFromFile(pd3dDevice, texName, nullptr, &m_pTextureDiffuse);
+		int len = wcslen(texName);
+		if ( wcscmp(&texName[len - 3], L"dds") == 0 or
+			 wcscmp(&texName[len - 3], L"DDS") == 0) 
+		{
+			hr = CreateDDSTextureFromFile(pd3dDevice, texName, nullptr, &m_pTextureDiffuse);
+		}
+		else {
+			hr = CreateWICTextureFromFile(pd3dDevice, texName, nullptr, &m_pTextureDiffuse);
+		}
 		if (FAILED(hr)) return;
 	}
 
@@ -172,7 +181,7 @@ void BoxShader::SetDiffuseTexture(const WCHAR* texName)
 		sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 		sampDesc.MinLOD = 0;
 		sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-		HRESULT hr = pd3dDevice->CreateSamplerState(&sampDesc, &m_pSamplerLinear);
+		hr = pd3dDevice->CreateSamplerState(&sampDesc, &m_pSamplerLinear);
 		if (FAILED(hr)) return;
 	}
 }
