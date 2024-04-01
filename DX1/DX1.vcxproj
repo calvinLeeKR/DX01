@@ -151,6 +151,8 @@
     <ClInclude Include="IMesh.h" />
     <ClInclude Include="ObjModel.h" />
     <ClInclude Include="DX1.h" />
+    <ClInclude Include="preDefines.h" />
+    <ClInclude Include="ResourceFactory.h" />
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Init_DX.h" />
@@ -176,6 +178,7 @@
   <ItemGroup>
     <ClCompile Include="ObjModel.cpp" />
     <ClCompile Include="DX1.cpp" />
+    <ClCompile Include="ResourceFactory.cpp" />
     <ClCompile Include="StepTimer.cpp" />
     <ClCompile Include="MESH.cpp" />
     <ClCompile Include="pch.cpp">
