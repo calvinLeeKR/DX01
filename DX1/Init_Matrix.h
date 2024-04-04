@@ -31,8 +31,8 @@ HRESULT Init_Matrix()
 	g_World = XMMatrixIdentity();
 
 	// Initialize the view matrix
-	XMVECTOR Eye = XMVectorSet(5.0f, 5.0f, -5.0f, 0.0f);
-	XMVECTOR At = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	XMVECTOR Eye = XMVectorSet(5.0f, 6.0f, -5.0f, 0.0f);
+	XMVECTOR At = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	g_View = XMMatrixLookAtLH(Eye, At, Up);
 
@@ -40,17 +40,5 @@ HRESULT Init_Matrix()
 	g_Projection = XMMatrixPerspectiveFovLH(XM_PIDIV4, window_Width / (FLOAT)window_Height, 0.01f, 100.0f);
 
 	return S_OK;
-}
-
-
-void Render_GridMatrix()
-{
-	XMMATRIX World = XMMatrixIdentity();
-	ConstantBuffer cb;
-	cb.mWorld = XMMatrixTranspose(World);
-	cb.mView = XMMatrixTranspose(g_View);
-	cb.mProjection = XMMatrixTranspose(g_Projection);
-	pd3dContext->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb, 0, 0);
-	pd3dContext->VSSetConstantBuffers(0, 1, &g_pConstantBuffer);
 }
 

@@ -99,5 +99,6 @@ float4 PS( PS_INPUT input) : SV_Target
     TexColor.rgb += result.Specular;
 
 
+
     return TexColor;
 }

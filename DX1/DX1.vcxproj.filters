@@ -99,6 +99,9 @@
     <ClInclude Include="preDefines.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="GridModel.h">
+      <Filter>Class</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX1.cpp">
@@ -130,6 +133,9 @@
     </ClCompile>
     <ClCompile Include="ResourceFactory.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="GridModel.cpp">
+      <Filter>Class</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

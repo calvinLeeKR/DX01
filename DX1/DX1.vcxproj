@@ -148,6 +148,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="GridModel.h" />
     <ClInclude Include="IMesh.h" />
     <ClInclude Include="ObjModel.h" />
     <ClInclude Include="DX1.h" />
@@ -176,6 +177,7 @@
     <ClInclude Include="tk\WICTextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GridModel.cpp" />
     <ClCompile Include="ObjModel.cpp" />
     <ClCompile Include="DX1.cpp" />
     <ClCompile Include="ResourceFactory.cpp" />

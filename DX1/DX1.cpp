@@ -6,6 +6,7 @@
 #include "DX1.h"
 #include "StepTimer.h"
 #include "ObjModel.h"
+#include "GridModel.h"
 
 #define SAFE_RELESE(x) if(x){(x)->Release(); (x)=nullptr;}
 
@@ -26,6 +27,7 @@ ID3D11Device* pd3dDevice = nullptr;                     // the pointer to our Di
 ID3D11DeviceContext* pd3dContext = nullptr;           // the pointer to our Direct3D device context
 ID3D11BlendState* g_pBlendState = nullptr;
 ID3DBlob* g_pVSBlob_VS = nullptr;
+
 
 
 
@@ -61,6 +63,9 @@ ID3D11DeviceContext* GetD3DContext() {
 BoxMESH* g_BoxMesh = nullptr;
 BoxShader* g_BoxShader = nullptr;
 CUP_MESH* g_CupMesh = nullptr;
+GridModel* g_GridModel = nullptr;
+WVPConstantBuffer* g_WVP = nullptr;
+
 
 //800 600
 //700 500
@@ -91,12 +96,16 @@ void Move_WorldTM()
             timeStart = timeCur;
         t = (timeCur - timeStart) / 1000.0f;
     }
-    g_World = XMMatrixScaling(2.f, 2.f, 2.f);
-    g_World *= XMMatrixRotationY(t/2.f);
-
+    g_World = XMMatrixScaling(3.f, 3.f, 3.f);
+    g_World *= XMMatrixRotationY(t / 2.f);
+    g_World *= XMMatrixTranslation(0.f, 1.f, 0.f);
 
     g_BoxShader->SetWorld(g_World);
     g_BoxShader->SetViewProjection(g_View, g_Projection);
+
+    g_WVP->mCB.World = XMMatrixIdentity();
+    g_WVP->mCB.View = g_View;
+    g_WVP->mCB.Proj = g_Projection;
 }
 
 
@@ -110,13 +119,8 @@ void Render(float fElapsedTime)//그리기 포함
 
 	Move_WorldTM();
 
-    g_BoxShader->PreRender(pd3dContext);
 	//g_BoxMesh->Render(pd3dContext);
 
-    Render_GridShader();
-    Render_GridModel();
-    Render_GridMatrix();
-    pd3dContext->Draw(46, 0);
 
 
 //     if (g_pBlendState) {
@@ -128,9 +132,11 @@ void Render(float fElapsedTime)//그리기 포함
 //         pd3dContext->OMSetBlendState(g_pBlendState, blendFactor, mask);
 //     }
 
-
+    g_BoxShader->PreRender(pd3dContext);
     g_CupMesh->Render(pd3dContext);
 
+    g_WVP->Apply(pd3dContext);
+    g_GridModel->Render(pd3dContext);
 
     pSwapChain->Present(DXGI_SWAP_EFFECT_SEQUENTIAL, 0);//pSwapChain->Present(0, 0);
     //pd3dContext->Draw(4, 0);//버텍스 갯수, 버텍스 시작점
@@ -172,9 +178,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     if (FAILED(Init_BlendState())) goto E_FINAL_POS;
     if (FAILED(Init_Matrix())) goto E_FINAL_POS;
 
-    if (FAILED(Init_GridVertexShader())) goto E_FINAL_POS;
-    if (FAILED(Init_GridPixelShader())) goto E_FINAL_POS;
-    if (FAILED(Init_GridModel())) goto E_FINAL_POS;
+    // if (FAILED(Init_GridVertexShader())) goto E_FINAL_POS;
+    // if (FAILED(Init_GridPixelShader())) goto E_FINAL_POS;
+    // if (FAILED(Init_GridModel())) goto E_FINAL_POS;
 
 
     g_BoxShader = new BoxShader;
@@ -193,6 +199,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_CupMesh = new CUP_MESH;
     g_CupMesh->Init();
     g_CupMesh->SetShader(g_BoxShader);
+
+    g_GridModel = new GridModel;
+    g_GridModel->Init();
+
+    g_WVP = new WVPConstantBuffer;
+    g_WVP->Init();
 
     //if (FAILED(Init_GridMatrix())) goto E_FINAL_POS;
 
@@ -213,6 +225,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 E_FINAL_POS:
 
+    delete g_WVP;
     delete g_BoxMesh;
     delete g_BoxShader;
     delete g_CupMesh;
@@ -227,7 +240,6 @@ E_FINAL_POS:
     SAFE_RELESE(g_pVertexShader);
     SAFE_RELESE(g_pPixelShader);
     
-    SAFE_RELESE(g_pGridVertexBuffer);
     SAFE_RELESE(g_pGridVertexLayout);
     SAFE_RELESE(g_pGridVertexShader);
     SAFE_RELESE(g_pGridPixelShader); //grid
