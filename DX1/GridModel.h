@@ -43,3 +43,4 @@ public:
     WRL::ComPtr<ID3D11Buffer> m_DxCB;
 
 };
+

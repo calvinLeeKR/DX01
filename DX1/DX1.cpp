@@ -239,10 +239,6 @@ E_FINAL_POS:
     SAFE_RELESE(g_pVertexLayout);
     SAFE_RELESE(g_pVertexShader);
     SAFE_RELESE(g_pPixelShader);
-    
-    SAFE_RELESE(g_pGridVertexLayout);
-    SAFE_RELESE(g_pGridVertexShader);
-    SAFE_RELESE(g_pGridPixelShader); //grid
 
     SAFE_RELESE(g_pRenderTargetView);
     SAFE_RELESE(pd3dContext);
