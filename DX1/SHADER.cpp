@@ -113,7 +113,7 @@ void BoxShader::SetLightDir(XMFLOAT3 dir)
 	}
 }
 
-void BoxShader::SetViewProjection(XMMATRIX& view, XMMATRIX& proj)
+void BoxShader::SetViewProjection(XMMATRIX view, XMMATRIX proj)
 {
 	m_View = view;
 	m_Proj = proj;

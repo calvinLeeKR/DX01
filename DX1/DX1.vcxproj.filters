@@ -19,6 +19,9 @@
     <Filter Include="Class">
       <UniqueIdentifier>{d85f3daf-44c8-4228-b10a-7f7bc138976b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{cbe15220-e853-4e75-9332-7a5ffd415c6a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -39,19 +42,10 @@
     <ClInclude Include="Init_RenderTarget_ViewPort.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Init_VSPS.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Init_DX.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Init_Texture.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Init_Matrix.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Init_Model.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Render.h">
@@ -102,6 +96,12 @@
     <ClInclude Include="GridModel.h">
       <Filter>Class</Filter>
     </ClInclude>
+    <ClInclude Include="Unit.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX1.cpp">
@@ -136,6 +136,12 @@
     </ClCompile>
     <ClCompile Include="GridModel.cpp">
       <Filter>Class</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

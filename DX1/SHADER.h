@@ -43,11 +43,14 @@ public:
 
     void SetLightDir(XMFLOAT3 dir);
     void SetAmbientLight(float a) { m_LightDir.w = a; }
-    void SetWorld(XMMATRIX& m) { m_World = m; }
-    void SetViewProjection(XMMATRIX& view, XMMATRIX& proj);
+    void SetWorld(XMMATRIX m) { m_World = m; }
+    void SetViewProjection(XMMATRIX view, XMMATRIX proj);
     void SetDiffuseTexture(const WCHAR* texName);
 
     void PreRender(ID3D11DeviceContext* pd3dContext) override;
+    void Apply(ID3D11DeviceContext* pd3dContext) {
+        PreRender(pd3dContext);
+    }
     void Release() override;
 
 protected:

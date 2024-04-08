@@ -40,29 +40,19 @@ BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 HRESULT             InitDevice();
-void Render();
-
-ID3D11Device* GetD3DDevice() {
-    return pd3dDevice; 
-}
-
-ID3D11DeviceContext* GetD3DContext() {
-    return pd3dContext;
-}
+ID3D11Device* GetD3DDevice() { return pd3dDevice; }
+ID3D11DeviceContext* GetD3DContext() { return pd3dContext; }
 
 
 #include "Init_DX.h"
 #include "Init_RenderTarget_ViewPort.h"
-#include "Init_VSPS.h"
-#include "Init_Model.h"
-#include "Init_Texture.h"
 #include "Init_Matrix.h"
 #include "MESH.h"
 #include "SHADER.h"
+#include "Unit.h"
 
-BoxMESH* g_BoxMesh = nullptr;
-BoxShader* g_BoxShader = nullptr;
-CUP_MESH* g_CupMesh = nullptr;
+Unit* g_Unit = nullptr;
+
 GridModel* g_GridModel = nullptr;
 WVPConstantBuffer* g_WVP = nullptr;
 
@@ -80,6 +70,13 @@ float offset = 0.f;
 float dir = 0.005f;
 float end = 0.5f;
 
+
+void Init_Game()
+{
+    g_Unit = new Unit;
+
+}
+
 void Move_WorldTM()
 {
     // Update our time
@@ -96,28 +93,39 @@ void Move_WorldTM()
             timeStart = timeCur;
         t = (timeCur - timeStart) / 1000.0f;
     }
-    g_World = XMMatrixScaling(3.f, 3.f, 3.f);
-    g_World *= XMMatrixRotationY(t / 2.f);
-    g_World *= XMMatrixTranslation(0.f, 1.f, 0.f);
+    Matrix mtm = XMMatrixScaling(3.f, 3.f, 3.f);
+    mtm *= XMMatrixRotationY(t / 2.f);
+    mtm *= XMMatrixTranslation(0.f, 1.f, 0.f);
 
-    g_BoxShader->SetWorld(g_World);
-    g_BoxShader->SetViewProjection(g_View, g_Projection);
+    g_Unit->mModelTM = mtm;
 
     g_WVP->mCB.World = XMMatrixIdentity();
     g_WVP->mCB.View = g_View;
     g_WVP->mCB.Proj = g_Projection;
 }
 
+void MoveCamera()
+{
+    g_Unit->mShader->SetViewProjection(g_View, g_Projection);
+
+}
+
+void Update_Game(float fElapsedTime)
+{
+    MoveCamera();
+
+    Move_WorldTM();
+
+    g_Unit->Update(fElapsedTime);
+}
 
 
-
-void Render(float fElapsedTime)//그리기 포함
+void Render_Game(float fElapsedTime)//그리기 포함
 {
     // pd3dContext->OMSetRenderTargets(1, &g_pRenderTargetView, g_pDepthStencilView);//랜드타겟 설정
     pd3dContext->ClearRenderTargetView(g_pRenderTargetView, DirectX::Colors::Gray);//랜드타겟 블루로 클리어
     pd3dContext->ClearDepthStencilView(g_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL , 1.0f, 0);
 
-	Move_WorldTM();
 
 	//g_BoxMesh->Render(pd3dContext);
 
@@ -131,10 +139,8 @@ void Render(float fElapsedTime)//그리기 포함
 // 
 //         pd3dContext->OMSetBlendState(g_pBlendState, blendFactor, mask);
 //     }
-
-    g_BoxShader->PreRender(pd3dContext);
-    g_CupMesh->Render(pd3dContext);
-
+    g_Unit->Render(pd3dContext);
+    
     g_WVP->Apply(pd3dContext);
     g_GridModel->Render(pd3dContext);
 
@@ -175,7 +181,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     if (FAILED(InitDevice())) goto E_FINAL_POS;
  
     if (FAILED(Init_RenderTarget_ViewPort())) goto E_FINAL_POS;//스크린 좌표계
-    if (FAILED(Init_BlendState())) goto E_FINAL_POS;
     if (FAILED(Init_Matrix())) goto E_FINAL_POS;
 
     // if (FAILED(Init_GridVertexShader())) goto E_FINAL_POS;
@@ -183,28 +188,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     // if (FAILED(Init_GridModel())) goto E_FINAL_POS;
 
 
-    g_BoxShader = new BoxShader;
-    g_BoxShader->Init();
-    g_BoxShader->SetLightDir(vLightDir);
-    g_BoxShader->SetAmbientLight(0.2f);
-    g_BoxShader->SetDiffuseTexture(L"cup.jpg");
-    g_BoxShader->SetWorld(g_World);
-    g_BoxShader->SetViewProjection(g_View, g_Projection);
-
-
-    g_BoxMesh = new BoxMESH;
-    g_BoxMesh->Init();
-    g_BoxMesh->SetShader(g_BoxShader);
-
-    g_CupMesh = new CUP_MESH;
-    g_CupMesh->Init();
-    g_CupMesh->SetShader(g_BoxShader);
 
     g_GridModel = new GridModel;
     g_GridModel->Init();
 
     g_WVP = new WVPConstantBuffer;
     g_WVP->Init();
+
+    Init_Game();
 
     //if (FAILED(Init_GridMatrix())) goto E_FINAL_POS;
 
@@ -219,26 +210,20 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         else
         {
             float t = g_StepTimer.Tick();
-            Render(t);
+            Update_Game(t);
+            Render_Game(t);
         }
     }
 
 E_FINAL_POS:
 
     delete g_WVP;
-    delete g_BoxMesh;
-    delete g_BoxShader;
-    delete g_CupMesh;
 
     SAFE_RELESE(g_pVSBlob_VS);
 
     SAFE_RELESE(g_pConstantBuffer);
 
     SAFE_RELESE(g_pBlendState);
-
-    SAFE_RELESE(g_pVertexLayout);
-    SAFE_RELESE(g_pVertexShader);
-    SAFE_RELESE(g_pPixelShader);
 
     SAFE_RELESE(g_pRenderTargetView);
     SAFE_RELESE(pd3dContext);

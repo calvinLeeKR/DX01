@@ -148,6 +148,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Game.h" />
     <ClInclude Include="GridModel.h" />
     <ClInclude Include="IMesh.h" />
     <ClInclude Include="ObjModel.h" />
@@ -158,10 +159,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="Init_DX.h" />
     <ClInclude Include="Init_Matrix.h" />
-    <ClInclude Include="Init_Model.h" />
     <ClInclude Include="Init_RenderTarget_ViewPort.h" />
-    <ClInclude Include="Init_Texture.h" />
-    <ClInclude Include="Init_VSPS.h" />
     <ClInclude Include="MESH.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Render.h" />
@@ -175,8 +173,10 @@
     <ClInclude Include="tk\PlatformHelpers.h" />
     <ClInclude Include="tk\SimpleMath.h" />
     <ClInclude Include="tk\WICTextureLoader.h" />
+    <ClInclude Include="Unit.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="GridModel.cpp" />
     <ClCompile Include="ObjModel.cpp" />
     <ClCompile Include="DX1.cpp" />
@@ -193,6 +193,7 @@
     <ClCompile Include="tk\DDSTextureLoader.cpp" />
     <ClCompile Include="tk\SimpleMath.cpp" />
     <ClCompile Include="tk\WICTextureLoader.cpp" />
+    <ClCompile Include="Unit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX1.rc" />

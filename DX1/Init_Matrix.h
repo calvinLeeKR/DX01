@@ -31,7 +31,7 @@ HRESULT Init_Matrix()
 	g_World = XMMatrixIdentity();
 
 	// Initialize the view matrix
-	XMVECTOR Eye = XMVectorSet(5.0f, 6.0f, -5.0f, 0.0f);
+	XMVECTOR Eye = XMVectorSet(5.0f, 6.0f, -5.0f, 0.0f) * 3.f;
 	XMVECTOR At = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	g_View = XMMatrixLookAtLH(Eye, At, Up);
