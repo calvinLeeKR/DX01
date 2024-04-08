@@ -148,6 +148,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Behavior.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GridModel.h" />
     <ClInclude Include="IMesh.h" />
@@ -176,6 +177,7 @@
     <ClInclude Include="Unit.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Behavior.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GridModel.cpp" />
     <ClCompile Include="ObjModel.cpp" />
