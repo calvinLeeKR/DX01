@@ -52,6 +52,12 @@ void UActor::Init()
     InitAI();
 }
 
+void UActor::Release()
+{
+	SAFE_DELETE(m_Unit);
+	SAFE_DELETE(m_UnitMovement);
+}
+
 void UActor::InitAI()
 {
     m_AI = new BTSequence(nullptr);
@@ -77,4 +83,9 @@ void UActor::Update(float fElapsedTime)
     if (m_AI) m_AI->tick();
     //if (m_UnitMovement) m_UnitMovement->Update(fElapsedTime);
     if (m_Unit) m_Unit->Update(fElapsedTime);
+}
+
+void UActor::Render(ID3D11DeviceContext* pd3dContext)
+{
+	if (m_Unit) m_Unit->Render(pd3dContext);
 }

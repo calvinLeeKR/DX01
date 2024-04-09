@@ -72,17 +72,7 @@ public:
     void InitAI();
     void Init();
 
-
-    void Release()
-    {
-        SAFE_DELETE(m_Unit);
-        SAFE_DELETE(m_UnitMovement);
-    }
-
+    void Release();
     void Update(float fElapsedTime);
-
-    void Render(ID3D11DeviceContext* pd3dContext)
-    {
-        if (m_Unit) m_Unit->Render(pd3dContext);
-    }
+    void Render(ID3D11DeviceContext* pd3dContext);
 };
