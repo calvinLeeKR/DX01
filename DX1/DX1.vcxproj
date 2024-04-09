@@ -175,6 +175,7 @@
     <ClInclude Include="tk\SimpleMath.h" />
     <ClInclude Include="tk\WICTextureLoader.h" />
     <ClInclude Include="Unit.h" />
+    <ClInclude Include="UnitBehavior.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Behavior.cpp" />

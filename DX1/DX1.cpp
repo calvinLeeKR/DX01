@@ -9,6 +9,7 @@
 #include "GridModel.h"
 
 #define SAFE_RELESE(x) if(x){(x)->Release(); (x)=nullptr;}
+#define SAFE_DELETE(x) if(x){ delete (x); (x)=nullptr; }
 
 #define MAX_LOADSTRING 100
 
@@ -51,7 +52,7 @@ ID3D11DeviceContext* GetD3DContext() { return pd3dContext; }
 #include "SHADER.h"
 #include "Unit.h"
 
-Unit* g_Unit = nullptr;
+UActor* g_Actor = nullptr;
 
 GridModel* g_GridModel = nullptr;
 WVPConstantBuffer* g_WVP = nullptr;
@@ -73,8 +74,13 @@ float end = 0.5f;
 
 void Init_Game()
 {
-    g_Unit = new Unit;
+    g_Actor = new UActor;
 
+}
+
+void Destroy_Game()
+{
+    SAFE_DELETE(g_Actor);
 }
 
 void Move_WorldTM()
@@ -97,7 +103,7 @@ void Move_WorldTM()
     mtm *= XMMatrixRotationY(t / 2.f);
     mtm *= XMMatrixTranslation(0.f, 1.f, 0.f);
 
-    g_Unit->mModelTM = mtm;
+    g_Actor->m_Unit->mModelTM = mtm;
 
     g_WVP->mCB.World = XMMatrixIdentity();
     g_WVP->mCB.View = g_View;
@@ -106,7 +112,7 @@ void Move_WorldTM()
 
 void MoveCamera()
 {
-    g_Unit->mShader->SetViewProjection(g_View, g_Projection);
+    g_Actor->m_Unit->mShader->SetViewProjection(g_View, g_Projection);
 
 }
 
@@ -116,7 +122,7 @@ void Update_Game(float fElapsedTime)
 
     Move_WorldTM();
 
-    g_Unit->Update(fElapsedTime);
+    g_Actor->Update(fElapsedTime);
 }
 
 
@@ -139,7 +145,7 @@ void Render_Game(float fElapsedTime)//그리기 포함
 // 
 //         pd3dContext->OMSetBlendState(g_pBlendState, blendFactor, mask);
 //     }
-    g_Unit->Render(pd3dContext);
+    g_Actor->Render(pd3dContext);
     
     g_WVP->Apply(pd3dContext);
     g_GridModel->Render(pd3dContext);
@@ -150,6 +156,8 @@ void Render_Game(float fElapsedTime)//그리기 포함
 
     //Sleep(10);
 }
+
+
 
 XMFLOAT3 vLightDir = { -0.577f, 0.577f, -0.577f };
 
@@ -216,6 +224,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
 
 E_FINAL_POS:
+    Destroy_Game();
 
     delete g_WVP;
 

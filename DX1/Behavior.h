@@ -8,14 +8,11 @@ enum BehaviorStatus
     BH_RUNNING
 };
 
-class IBehavior
+class IBehaviorBase
 {
-protected:
-    BehaviorStatus m_BHStatus = BH_INVALID;
-    class CompositeBH* m_Parent = nullptr;
-
-
 public:
+    BehaviorStatus m_BHStatus = BH_INVALID;
+
     virtual BehaviorStatus Update() = 0;
     virtual void onInitialize() {}
     virtual void onTerminate() {}
@@ -37,95 +34,143 @@ public:
 };
 
 
-struct BehaviorContext 
+class IBehavior : public IBehaviorBase
 {
-    class CompositeBH* m_Parent = nullptr;
-    IBehavior* mCurrent;
-    int        mIdx;
-
-};
-
-class CompositeBH : public IBehavior
-{
-protected:
-    typedef std::vector<IBehavior*> IBehaviors;
-    IBehaviors m_Children;    
-
 public:
-    CompositeBH()
-    void AddChild(IBehavior* child) { m_Children.push_back(child); }
-    void RemoveChild(IBehavior*);
-    void ClearChildren();
+    IBehavior* m_Parent = nullptr;
+    IBehavior* m_Child = nullptr;
+    IBehavior* m_Next = nullptr;
+
+    IBehavior(IBehavior* parent) { m_Parent = parent; }
+
+    void AddChild(IBehavior* newnode)
+    {
+        if (m_Child)
+            newnode->m_Child = m_Child;
+
+        m_Child = newnode;
+    }
+    void AddNext(IBehavior* newnode)
+    {
+        if (m_Next)
+            newnode->m_Next = m_Next;
+
+        m_Next = newnode;
+    }
+    IBehavior* FindPrev() 
+    {
+        if (m_Parent->m_Child == this)
+            return nullptr;
+        
+        IBehavior* node = m_Parent->m_Child;
+
+        while (node->m_Next) {
+            if (node->m_Next == this)
+                return node;
+
+            node = node->m_Next;
+        }
+        
+        return nullptr;
+    }
+    void RemoveChildAll()
+    {
+        while (m_Child) {
+            IBehavior* node = m_Child;
+            m_Child = node->m_Next;
+
+            node->RemoveChildAll();
+            delete node;
+        }
+    }
+    void RemoveLink()
+    {
+        RemoveChildAll();
+
+        if (m_Parent->m_Child == this) {
+            m_Parent->m_Child = m_Next;            
+        }
+        else {
+            IBehavior* prev = FindPrev();
+            if (prev) {
+                prev->m_Next = m_Next;
+            }
+        }
+    }
+    void RemoveNext() {
+        IBehavior* n = m_Next;
+        if (n) {
+            m_Next = n->m_Next;
+            delete n;
+        }
+    }
 };
 
 
-class SequenceBH : public CompositeBH
+class BTSequence : public IBehavior
 {
-    int  m_CurrentIdx = 0;
-protected:
-    virtual void onInitialize() override { m_CurrentIdx = 0; }
+public:
+    BTSequence(IBehavior* parent) : IBehavior(parent) {}
 
     virtual BehaviorStatus Update() override
     {
-        BehaviorStatus r = BH_RUNNING;
+        BehaviorStatus s = BH_RUNNING;
 
-        for(int i=0; i<)
-        if (m_CurrentIdx < m_Children.size())
+        IBehavior* bh = m_Child;
+
+        while (bh)
         {
-            BehaviorStatus s = m_Children[m_CurrentIdx]->tick();
-            
+            s = bh->tick();
             switch (s)
             {
-            case BH_SUCCESS: 
-                ++m_CurrentIdx; 
-                r = BH_RUNNING;
+            case BH_SUCCESS:
+                bh = bh->m_Next;
                 break;
-            case BH_FAILURE: 
-                r = BH_FAILURE; 
+            case BH_FAILURE:
+                bh = nullptr;
+                break;
+            case BH_RUNNING:
+                bh = nullptr;
                 break;
             }
         }
-        else {
-            r = BH_SUCCESS;
-        }
 
-        return r;             
+        return s;
     }
 };
 
 
 
-class FallbackBH : public CompositeBH
+class BTFallback : public IBehavior
 {
-    int  m_CurrentIdx = 0;
-protected:
-    virtual void onInitialize() override { m_CurrentIdx = 0; }
+public:
 
     virtual BehaviorStatus Update() override
     {
-        BehaviorStatus re = BH_RUNNING;
-        if (m_CurrentIdx < m_Children.size())
-        {
-            BehaviorStatus s = m_Children[m_CurrentIdx]->tick();
+        BehaviorStatus s = BH_RUNNING;
+        IBehavior* bh = m_Child;
 
+        while (bh)
+        {
+            s = bh->tick();
             switch (s)
             {
-            case BH_FAILURE:  // 만약 실패를 했다면, Next Behavior를 하러 가야 한다.
-                ++m_CurrentIdx; 
-                re = BH_RUNNING;
+            case BH_SUCCESS:
+                 bh = nullptr;
                 break;
-            case BH_SUCCESS:   // if SUCCESS, 완료하고 상위로 올라가야 한다.
-                m_BHStatus = BH_SUCCESS; 
-                re = BH_SUCCESS;
+            case BH_FAILURE:
+                bh = bh->m_Next;
+                break;
+            case BH_RUNNING:
+                bh = nullptr;
                 break;
             }
         }
-        else {
-            re = BH_FAILURE;
-        }
 
-        return re;
+        return s;
     }
 };
+
+
 
 
