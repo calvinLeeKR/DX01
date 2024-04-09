@@ -6,8 +6,8 @@ float GetElapsedTime();
 
 class UnitMoveBehavior : public IBehavior
 {
-protected:
-    UnitMovement* m_Movement;
+public:
+    UnitMoveBehavior(IBehavior* parent) : IBehavior(parent) {}
 
     void Init(Unit* u, Vector3 target) {
         m_Movement = new UnitMovement(u);
@@ -23,9 +23,9 @@ protected:
         else 
             return BH_SUCCESS;
     }
+protected:
+
+    UnitMovement* m_Movement;
 };
-
-
-void 
 
 

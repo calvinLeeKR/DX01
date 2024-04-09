@@ -44,6 +44,7 @@ HRESULT             InitDevice();
 ID3D11Device* GetD3DDevice() { return pd3dDevice; }
 ID3D11DeviceContext* GetD3DContext() { return pd3dContext; }
 
+float GetElapsedTime() { return g_StepTimer.Tick(); }
 
 #include "Init_DX.h"
 #include "Init_RenderTarget_ViewPort.h"

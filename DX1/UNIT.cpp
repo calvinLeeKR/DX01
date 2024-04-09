@@ -45,7 +45,7 @@ void Unit::Render(ID3D11DeviceContext* d3dContext)
 
 void UActor::Init()
 {
-    m_Unit = new Unit;
+    m_Unit = new Unit();
     m_UnitMovement = new UnitMovement(m_Unit);
     m_UnitMovement->m_Target = Vector3(5.f, 0.f, 5.f);
 

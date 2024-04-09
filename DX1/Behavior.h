@@ -139,8 +139,6 @@ public:
     }
 };
 
-
-
 class BTFallback : public IBehavior
 {
 public:
@@ -170,7 +168,3 @@ public:
         return s;
     }
 };
-
-
-
-
